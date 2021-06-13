@@ -48,7 +48,7 @@ class MatchingProfile extends Component {
                   source={{
                     uri: `http://sathimubark.com/api/wedding/uploads/userimage/${pokeList.pick_url}`,
                   }}
-                  resizeMode="stretch"
+                  resizeMode="contain"
                 />
               ) : (
                 <Image
@@ -249,6 +249,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     position: "absolute",
     marginTop: 20,
+    backgroundColor: "#FFF",
   },
   name: {
     fontSize: 22,
@@ -296,6 +297,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   userdetail: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "flex-start",
     padding: 10,

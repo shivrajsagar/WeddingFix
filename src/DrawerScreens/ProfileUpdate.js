@@ -11,10 +11,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { Button } from "react-native-elements";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SearchBar from "react-native-elements/dist/searchbar/SearchBar-ios";
+import { BottomSheet, Button } from "react-native-elements";
 
 const { width } = Dimensions.get("screen");
 
@@ -24,12 +22,14 @@ const initial_state = {
   nickname: "",
 };
 
-const ProfileUpdate = ({ navigation, route }) => {
+const ProfileUpdate = ({ route }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [image, setImage] = useState(pick_url1);
+
   const {
     name1,
     email1,
     phonenumber1,
-    customerid1,
     marital_Status1,
     pin_code1,
     city1,
@@ -51,7 +51,6 @@ const ProfileUpdate = ({ navigation, route }) => {
     pick_url1,
   } = route.params;
 
-  const [pick_url12, setpick_url1] = useState(pick_url1);
   const [gender, setGender] = useState(gender1);
   const [mangalik, setMagalik] = useState(mangali1);
   const [nickname, setnickname] = useState(nick_name1);
@@ -84,117 +83,43 @@ const ProfileUpdate = ({ navigation, route }) => {
     "https://source.unsplash.com/400x400?man"
   );
 
-  const handleInputChange = (name, value) => {
-    setValues({
-      ...values,
-      [name]: value,
-    });
-  };
+  const cameraImage = async () => {
+    let { status } = await ImagePicker.requestCameraPermissionsAsync();
 
-  const updateprofile = async () => {
-    const user_id = await AsyncStorage.getItem("user_id");
-
-    setLoading(true);
-
-    const newFile = {
-      name: avatar,
-      type: "image/jpeg",
-      uri: Platform.OS === "android" ? avatar : avatar.replace("file://", ""),
-    };
-
-    var dataToSend = {
-      proflePicUrl: newFile,
-      user_id: user_id,
-      userName: name,
-      gender: gender,
-      city: city,
-      pincode: pincode,
-      dob: biryhday,
-      maritalStatus: maritalstatus,
-      height: height,
-      weight: weight,
-      mangali: mangalik,
-      motherTonque: mothertongue,
-      currentWorkStatus: currentWorking,
-      salaryStatusCriteria: workingstatus,
-      sallary: currentIncome,
-      educationQualification: educationQualification,
-      fatherName: fatherName,
-      motherName: motherName,
-      caste: caste,
-      nickname: nickname,
-      userPassword: password,
-    };
-    // data.append("profilePicUrl", newFile);
-    // data.append("user_id", user_id);
-    // data.append("userName", name);
-    // data.append("gender", gender);
-    // data.append("city", city);
-    // data.append("pincode", pincode);
-    // data.append("dob", biryhday);
-    // data.append("maritalStatus", maritalstatus);
-    // data.append("height", height);
-    // data.append("weight", weight);
-    // data.append("mangali", mangalik);
-    // data.append("motherTonque", mothertongue);
-    // data.append("currentWorkStatus", currentWorking);
-    // data.append("salaryStatusCriteria", workingstatus);
-    // data.append("sallary", currentIncome);
-    // data.append("educationQualification", educationQualification);
-    // data.append("fatherName", fatherName);
-    // data.append("motherName", motherName);
-    // data.append("caste", caste);
-    // data.append("userPassword", password);
-
-    var formBody = [];
-    for (var key in dataToSend) {
-      var encodedKey = encodeURIComponent(key);
-      var encodedValue = encodeURIComponent(dataToSend[key]);
-      formBody.push(encodedKey + "=" + encodedValue);
+    if (status != "granted") {
+      return;
     }
-    formBody = formBody.join("&");
 
-    fetch(
-      "http://sathimubark.com/api/wedding/profileupdate.php?apicall=userprofileupdate",
-      {
-        method: "POST",
-        body: formBody,
-        headers: {
-          //Header Defination
-          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((responseJson) => {
-        //Hide Loader
-        setLoading(false);
-        console.log(responseJson);
-
-        if (responseJson.error != true) {
-          Alert.alert("User Profile Information updated");
-          console.log("User Profile Information updated");
-        } else {
-          setErrortext("No Data updated");
-        }
-      })
-      .catch((error) => {
-        //Hide Loader
-        setLoading(false);
-        console.error(error);
-      });
-  };
-
-  const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
       quality: 1,
     });
-    setAvatar(result.uri);
 
-    if (result.cancelled) {
-      console.log("User cancelled");
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
+
+  const galleryImage = async () => {
+    let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status != "granted") {
+      return;
+    }
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);
     }
   };
 
@@ -226,17 +151,59 @@ const ProfileUpdate = ({ navigation, route }) => {
           Profile Setting
         </Text>
         <View>
-          <TouchableOpacity onPress={pickImage}>
+          <TouchableOpacity onPress={() => setIsVisible(!isVisible)}>
             <Image
               style={styles.avatar}
               source={{
-                uri: pick_url12
-                  ? `http://sathimubark.com/api/wedding/uploads/userimage/${pick_url12}`
-                  : avatar,
+                uri: image ? image : avatar,
               }}
               resizeMode="cover"
             />
           </TouchableOpacity>
+          <BottomSheet
+            isVisible={isVisible}
+            containerStyle={{ backgroundColor: "rgba(.5,0.25,0,0.2)" }}
+          >
+            <View
+              style={{
+                backgroundColor: "white",
+                height: width * 0.6,
+                flex: 1,
+                justifyContent: "space-around",
+              }}
+            >
+              <Button
+                title="Camera"
+                onPress={cameraImage}
+                buttonStyle={{
+                  margin: 20,
+                  height: 50,
+                  borderRadius: 15,
+                  backgroundColor: "orange",
+                }}
+              />
+              <Button
+                title="Gallery"
+                onPress={galleryImage}
+                buttonStyle={{
+                  margin: 20,
+                  height: 50,
+                  borderRadius: 15,
+                  backgroundColor: "orange",
+                }}
+              />
+              <Button
+                title="Cancel"
+                buttonStyle={{
+                  margin: 20,
+                  height: 50,
+                  borderRadius: 15,
+                  backgroundColor: "red",
+                }}
+                onPress={() => setIsVisible(!isVisible)}
+              />
+            </View>
+          </BottomSheet>
         </View>
         <View
           style={{

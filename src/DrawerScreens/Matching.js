@@ -1,5 +1,12 @@
 import React, { Component } from "react";
-import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+  Image,
+} from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Button } from "react-native-elements";
 import axios from "axios";
@@ -43,21 +50,7 @@ class HomeScreen extends Component {
       manglik,
       data
     );
-    // var config = {
-    //   method: "get",
-    //   url: `http://sathimubark.com/api/wedding/read/getfilterdata.php?city=${country}&gender=${gender}&material=${materialstatus}&cast=${cast}&manglik=${manglik}`,
-    //   headers: {},
-    // };
 
-    // axios(config)
-    //   .then(function (response) {
-    //     const result = JSON.stringify(response.data.records);
-    //     this.setState({ data: response.data.records });
-    //     // console.log(result);
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
     try {
       const pokemonApiCall = await fetch(
         `http://sathimubark.com/api/wedding/read/getfilterdata.php?city=${country}&gender=${gender}&material=${materialstatus}&cast=${cast}&manglik=${manglik}`
@@ -511,40 +504,101 @@ class HomeScreen extends Component {
           />
         </View>
 
-        {data.map((item) => {
+        {data.map((item, index) => {
           return (
-            <View style={styles.card}>
-              <>
+            <View style={styles.card} key={index.toString()}>
+              <View style={{ flexDirection: "row" }}>
+                {isNaN(item.proflePicUrl) ? (
+                  <Image
+                    style={styles.image}
+                    source={{
+                      uri: `http://sathimubark.com/api/wedding/uploads/userimage/${item.proflePicUrl}`,
+                    }}
+                    // resizeMode="stretch"
+                  />
+                ) : (
+                  <Image
+                    style={styles.image}
+                    source={{
+                      uri: "https://bootdey.com/img/Content/avatar/avatar6.png",
+                    }}
+                  />
+                )}
+                <View style={styles.viewbutton}>
+                  <Button
+                    title="View Profile"
+                    buttonStyle={styles.button1}
+                    onPress={() =>
+                      navigation.navigate("Matching Profile", {
+                        matchID: item.Id,
+                      })
+                    }
+                  />
+                  <Button
+                    title="Send Request"
+                    buttonStyle={styles.button2}
+                    onPress={() =>
+                      Alert.alert("Are you sure to send request ?", "", [
+                        {
+                          text: "Cancel",
+                          onPress: () => console.log("Cancel Pressed"),
+                          style: "cancel",
+                          color: "#900",
+                        },
+                        {
+                          text: "Send Request",
+                          onPress: () => console.log("Send Request"),
+                          color: "#900",
+                        },
+                      ])
+                    }
+                  />
+                </View>
+              </View>
+              <View style={{ marginTop: 20 }}>
                 <View style={styles.cardview}>
-                  <Text style={styles.cardtext}>Name:</Text>
+                  <Text style={styles.cardtext}>Name: </Text>
                   <Text style={styles.cardtext}>{item.userName}</Text>
                 </View>
                 <View style={styles.cardview}>
-                  <Text style={styles.cardtext}>Father Name:</Text>
-                  <Text style={styles.cardtext}>{item.fatherName}</Text>
-                </View>
-                <View style={styles.cardview}>
-                  <Text style={styles.cardtext}>Mother Name:</Text>
-                  <Text style={styles.cardtext}>{item.motherName}</Text>
-                </View>
-                <View style={styles.cardview}>
-                  <Text style={styles.cardtext}>Materail Status:</Text>
+                  <Text style={styles.cardtext}>Materail Status: </Text>
                   <Text style={styles.cardtext}>{item.maritalStatus}</Text>
                 </View>
                 <View style={styles.cardview}>
-                  <Text style={styles.cardtext}>Sallary:</Text>
-                  <Text style={styles.cardtext}>{item.sallary}</Text>
+                  <Text style={styles.cardtext}>DOB: </Text>
+                  <Text style={styles.cardtext}>{item.dob}</Text>
                 </View>
-                <Button
-                  title="View Profile"
-                  buttonStyle={styles.button1}
-                  onPress={() =>
-                    navigation.navigate("Matching Profile", {
-                      matchID: item.Id,
-                    })
-                  }
-                />
-              </>
+                <View style={styles.cardview}>
+                  <Text style={styles.cardtext}>Cast: </Text>
+                  <Text style={styles.cardtext}>{item.caste}</Text>
+                </View>
+                <View style={styles.cardview}>
+                  <Text
+                    style={[
+                      styles.cardtext,
+                      { textAlign: "left", flex: 1, flexGrow: 1 },
+                    ]}
+                  >
+                    Education:{" "}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.cardtext,
+                      { textAlign: "right", flex: 1, flexGrow: 1 },
+                    ]}
+                  >
+                    {item.educationQualification}
+                  </Text>
+                </View>
+                <View style={styles.cardview}>
+                  <Text style={styles.cardtext}>Work Status: </Text>
+                  <Text style={styles.cardtext}>{item.currentWorkStatus}</Text>
+                </View>
+                <View style={styles.cardview}>
+                  <Text style={styles.cardtext}>City: </Text>
+                  <Text style={styles.cardtext}>{item.city}</Text>
+                </View>
+              </View>
             </View>
           );
         })}
@@ -574,25 +628,45 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   card: {
-    marginTop: 20,
+    flex: 1,
+    marginTop: 10,
     justifyContent: "flex-start",
     padding: 5,
-    height: 240,
-    width: width / 1.05,
     marginLeft: 10,
     marginRight: 10,
     backgroundColor: "#900",
     borderRadius: 10,
   },
   cardview: {
-    padding: 5,
+    margin: 5,
     flexDirection: "row",
     justifyContent: "space-between",
+    //alignItems: "center",
   },
   cardtext: {
     color: "#fff",
     fontSize: 20,
-    justifyContent: "flex-start",
+    textAlign: "justify",
+  },
+  image: {
+    height: 150,
+    width: 150,
+    borderRadius: 30,
+    backgroundColor: "#ffee",
+    marginLeft: 5,
+    marginTop: 5,
+  },
+  viewbutton: {
+    justifyContent: "space-around",
+    marginTop: 20,
+    marginLeft: 50,
+  },
+  button2: {
+    width: 130,
+    backgroundColor: "orange",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginBottom: 10,
   },
 });
 

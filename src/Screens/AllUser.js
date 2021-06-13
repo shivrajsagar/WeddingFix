@@ -14,7 +14,7 @@ const { width } = Dimensions.get("screen");
 class AllUser extends Component {
   state = {
     pokeList: {},
-    loading: true,
+    loading: false,
   };
 
   async componentDidMount() {
@@ -219,11 +219,11 @@ class AllUser extends Component {
                   </View>
                 </View>
               </View>
-              <Button
+              {/* <Button
                 title="Send Request"
                 buttonStyle={styles.button1}
                 onPress={() => navigation.navigate("All User")}
-              />
+              /> */}
             </View>
           )}
         </>

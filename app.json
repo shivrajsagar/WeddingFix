@@ -1,15 +1,11 @@
 {
   "expo": {
-    "name": "WeddingFix",
-    "slug": "WeddingFix",
-    "version": "1.0.3",
+    "name": "Sathimubark",
+    "slug": "Sathimubark",
+    "version": "1.0.4",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+    "icon": "./Image/wedding.png",
+    
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -26,12 +22,12 @@
         "CAMERA_ROLL"
       ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./Image/wedding.png",
+        "backgroundColor": "#900"
       },
       
       "package": "com.shivsagar.WeddingFix",
-      "versionCode":4
+      "versionCode":5
     },
     "web": {
       "favicon": "./assets/favicon.png"

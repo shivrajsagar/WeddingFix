@@ -38,13 +38,13 @@ const CardComponent = ({ item, navigation }) => {
 const styles = StyleSheet.create({
   card: {
     height: width * 0.35,
-    width: width * 0.3,
+    width: width * 0.35,
     backgroundColor: "#fff",
     flex: 1,
     margin: 10,
     alignItems: "flex-start",
     borderRadius: 10,
-    padding: 10,
+    padding: 8,
     justifyContent: "space-around",
   },
 });

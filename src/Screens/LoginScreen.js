@@ -63,13 +63,14 @@ const LoginScreen = ({ navigation }) => {
             const jsonValue = JSON.stringify(responseJson.user.id);
             AsyncStorage.setItem("user_id", jsonValue);
             const jsonValue1 = responseJson.user.name;
-
+            console.log(jsonValue1);
             global.name = jsonValue1;
             const image1 = responseJson.user.image;
-            // AsyncStorage.setItem("name", jsonValue1);
-            // AsyncStorage.setItem("image", image1);
+
+            AsyncStorage.setItem("name", jsonValue1);
+            AsyncStorage.setItem("image", image1);
             global.image = `http://sathimubark.com/api/wedding/uploads/userimage/${image1}`;
-            console.log(global.name, global.image);
+            //console.log(global.name, global.image);
 
             navigation.replace("DrawerNavigationRoutes");
           } else {
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   errorTextStyle: {
-    color: "red",
+    color: "green",
     textAlign: "center",
     fontSize: 14,
   },
